@@ -24,7 +24,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $update_error = 'Password must be at least 6 characters long.';
     } else {
         // Check if token is valid
-        $query = "SELECT * FROM User WHERE reset_token='$token' AND token_expiry > NOW()";
+        $query = "SELECT * FROM user WHERE reset_token='$token' AND token_expiry > NOW()";
         $result = $conn->query($query);
 
         if ($result->num_rows == 1) {
@@ -32,7 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
 
             // Update password and clear token
-            $query = "UPDATE User SET user_password='$hashed_password', reset_token=NULL, token_expiry=NULL WHERE reset_token='$token'";
+            $query = "UPDATE user SET user_password='$hashed_password', reset_token=NULL, token_expiry=NULL WHERE reset_token='$token'";
             if ($conn->query($query)) {
                 $update_success = 'Your password has been updated. You can now <a href="login.php">login</a>.';
             } else {

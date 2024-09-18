@@ -55,7 +55,7 @@
               include 'db.php';
 
               // Query to get the total number of products
-              $query = "SELECT COUNT(*) AS total_products FROM Product";
+              $query = "SELECT COUNT(*) AS total_products FROM product";
               $result = $conn->query($query);
 
               if ($result) {

@@ -30,7 +30,7 @@ if (isset($_POST['add_to_cart'])) {
         }
 
         // Check if the product is already in the cart
-        $cart_query = "SELECT * FROM Add_to_cart WHERE product_id = $product_id AND user_id = $user_id";
+        $cart_query = "SELECT * FROM add_to_cart WHERE product_id = $product_id AND user_id = $user_id";
         $cart_result = $conn->query($cart_query);
 
         if ($cart_result->num_rows > 0) {
@@ -51,7 +51,7 @@ if (isset($_POST['add_to_cart'])) {
                 }
             }
         } else {
-            $add_cart_query = "INSERT INTO Add_to_cart (product_id, image, quantity, stock, price, user_id) 
+            $add_cart_query = "INSERT INTO add_to_cart (product_id, image, quantity, stock, price, user_id) 
                                VALUES ($product_id, '$image', $quantity, $stock, $price, $user_id)";
             if ($conn->query($add_cart_query) === TRUE) {
                 echo "<script>alert('Product added Successfully'); window.location.href='loggedin.php';</script>";

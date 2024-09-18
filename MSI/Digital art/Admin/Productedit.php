@@ -6,7 +6,7 @@ if (isset($_GET['id'])) {
     $product_id = $_GET['id'];
 
     // Fetch the current product data
-    $query = "SELECT * FROM Product WHERE p_id = ?";
+    $query = "SELECT * FROM product WHERE p_id = ?";
     $stmt = $conn->prepare($query);
     if (!$stmt) {
         echo "<script>alert('Database error: " . $conn->error . "');</script>";
@@ -77,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Fetch the category name based on category ID
-    $category_query = "SELECT category_name FROM Category WHERE c_id = ?";
+    $category_query = "SELECT category_name FROM category WHERE c_id = ?";
     $category_stmt = $conn->prepare($category_query);
     if (!$category_stmt) {
         echo "<script>alert('Database error: " . $conn->error . "');</script>";
@@ -94,7 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $category_name = $category_row['category_name'];
 
     // Update the product data in the database
-    $update_query = "UPDATE Product SET product_name = ?, product_price = ?, product_details = ?, c_id = ?, category_name = ?, product_stock = ?, product_image = ? WHERE p_id = ?";
+    $update_query = "UPDATE product SET product_name = ?, product_price = ?, product_details = ?, c_id = ?, category_name = ?, product_stock = ?, product_image = ? WHERE p_id = ?";
     $update_stmt = $conn->prepare($update_query);
     if (!$update_stmt) {
         echo "<script>alert('Database error: " . $conn->error . "');</script>";
@@ -179,7 +179,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <option value="">Select a category</option>
                             <?php
                             // Fetch categories for the dropdown
-                            $category_query = "SELECT c_id, category_name FROM Category";
+                            $category_query = "SELECT c_id, category_name FROM category";
                             $category_result = $conn->query($category_query);
 
                             // Check if the query was successful

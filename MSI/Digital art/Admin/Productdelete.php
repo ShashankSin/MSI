@@ -13,7 +13,7 @@ if (isset($_GET['id'])) {
     $order_row = $order_result->fetch_assoc();
 
     // Fetch the product image path to delete the image from the server
-    $query = "SELECT product_image FROM Product WHERE p_id = ?";
+    $query = "SELECT product_image FROM product WHERE p_id = ?";
     $stmt = $conn->prepare($query);
     $stmt->bind_param("i", $product_id);
     $stmt->execute();
@@ -31,7 +31,7 @@ if (isset($_GET['id'])) {
     }
 
     // Delete the product record from the database
-    $delete_query = "DELETE FROM Product WHERE p_id = ?";
+    $delete_query = "DELETE FROM product WHERE p_id = ?";
     $stmt = $conn->prepare($delete_query);
     $stmt->bind_param("i", $product_id);
 

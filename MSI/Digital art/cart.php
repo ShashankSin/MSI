@@ -11,7 +11,7 @@ if (!isset($_SESSION['user_id'])) {
 $user_id = $_SESSION['user_id'];
 
 // Fetch cart items for the logged-in user with prepared statements
-$cart_query = $conn->prepare("SELECT * FROM Add_to_cart WHERE user_id = ?");
+$cart_query = $conn->prepare("SELECT * FROM add_to_cart WHERE user_id = ?");
 $cart_query->bind_param("i", $user_id);
 $cart_query->execute();
 $cart_result = $cart_query->get_result();

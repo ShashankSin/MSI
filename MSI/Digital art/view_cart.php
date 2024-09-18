@@ -9,7 +9,7 @@ if (!isset($_SESSION['user_id'])) {
 
 $user_id = $_SESSION['user_id'];
 
-$cart_query = "SELECT * FROM Add_to_cart WHERE user_id = $user_id";
+$cart_query = "SELECT * FROM add_to_cart WHERE user_id = $user_id";
 $cart_result = $conn->query($cart_query);
 
 ?>

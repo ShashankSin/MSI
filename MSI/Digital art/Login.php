@@ -20,7 +20,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $login_error = 'Invalid email format.';
     } else {
         // Query to check credentials
-        $query = "SELECT * FROM User WHERE user_email='$user_email'";
+        $query = "SELECT * FROM user WHERE user_email='$user_email'";
         $result = $conn->query($query);
 
         if ($result->num_rows == 1) {

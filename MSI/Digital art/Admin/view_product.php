@@ -48,7 +48,7 @@ include 'db.php'; // Include your database connection
         <div class="product_display container-xxl mt-5">
         <?php 
             // Fetch data from the Product table
-            $sql = "SELECT * FROM Product";
+            $sql = "SELECT * FROM product";
             $result = $conn->query($sql);
             if ($result->num_rows > 0) {
                 echo "<div>";

@@ -11,7 +11,7 @@ if (!isset($_SESSION['user_id'])) {
 $user_id = $_SESSION['user_id'];
 
 // Fetch cart items for the logged-in user
-$cart_query = "SELECT * FROM Add_to_cart WHERE user_id = $user_id";
+$cart_query = "SELECT * FROM add_to_cart WHERE user_id = $user_id";
 $cart_result = $conn->query($cart_query);
 
 if ($cart_result->num_rows > 0) {
@@ -21,7 +21,7 @@ if ($cart_result->num_rows > 0) {
         $quantity = $cart_item['quantity'];
 
         // Fetch current stock
-        $stock_query = "SELECT product_stock FROM Product WHERE p_id = $product_id";
+        $stock_query = "SELECT product_stock FROM product WHERE p_id = $product_id";
         $stock_result = $conn->query($stock_query);
         $product = $stock_result->fetch_assoc();
         $current_stock = $product['product_stock'];
@@ -30,11 +30,11 @@ if ($cart_result->num_rows > 0) {
         if ($quantity <= $current_stock) {
             // Deduct stock
             $new_stock = $current_stock - $quantity;
-            $update_stock_query = "UPDATE Product SET product_stock = $new_stock WHERE p_id = $product_id";
+            $update_stock_query = "UPDATE product SET product_stock = $new_stock WHERE p_id = $product_id";
             $conn->query($update_stock_query);
 
             // Create order record
-            $order_query = "INSERT INTO Orders (user_id, product_id, quantity, price) 
+            $order_query = "INSERT INTO orders (user_id, product_id, quantity, price) 
                             VALUES ($user_id, $product_id, $quantity, " . $cart_item['price'] * $quantity . ")";
             $conn->query($order_query);
         } else {
@@ -44,7 +44,7 @@ if ($cart_result->num_rows > 0) {
     }
 
     // Clear the cart by deleting items from the Add_to_cart table
-    $clear_cart_query = "DELETE FROM Add_to_cart WHERE user_id = $user_id";
+    $clear_cart_query = "DELETE FROM add_to_cart WHERE user_id = $user_id";
     if ($conn->query($clear_cart_query) === TRUE) {
         echo "Checkout successful and cart cleared!";
     } else {

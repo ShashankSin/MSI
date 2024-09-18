@@ -135,7 +135,7 @@ include('db.php');
                   <div class="row gap-3">
                      <?php
                      // Fetch products
-                     $product_query = "SELECT * FROM Product";
+                     $product_query = "SELECT * FROM product";
                      $product_result = $conn->query($product_query);
 
                      if (!$product_result) {

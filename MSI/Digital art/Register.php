@@ -26,7 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $registration_error = 'Password must be at least 6 characters long.';
     } else {
         // Check if email already exists
-        $email_check_query = "SELECT * FROM User WHERE user_email='$user_email'";
+        $email_check_query = "SELECT * FROM user WHERE user_email='$user_email'";
         $email_check_result = $conn->query($email_check_query);
 
         if ($email_check_result->num_rows > 0) {
@@ -36,7 +36,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $hashed_password = password_hash($user_password, PASSWORD_DEFAULT);
 
             // Insert user into the database
-            $query = "INSERT INTO User (user_name, user_email, user_password, user_phone) VALUES ('$user_name', '$user_email', '$hashed_password', '$user_phone')";
+            $query = "INSERT INTO user (user_name, user_email, user_password, user_phone) VALUES ('$user_name', '$user_email', '$hashed_password', '$user_phone')";
             
             if ($conn->query($query) === TRUE) {
                 $registration_success = 'Registration successful. You can now <a href="login.php">login</a>.';

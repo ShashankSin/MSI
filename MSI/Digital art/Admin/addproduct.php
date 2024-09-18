@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Upload the image
     if (move_uploaded_file($_FILES['product_image']['tmp_name'], $target_file)) {
         // Insert product data into the database
-        $sql = "INSERT INTO Product (product_name, product_price, product_details, c_id, category_name, product_stock, product_image)
+        $sql = "INSERT INTO product (product_name, product_price, product_details, c_id, category_name, product_stock, product_image)
                 VALUES ('$product_name', '$product_price', '$product_details', '$category_id', '$category_name', '$product_stock', '$product_image')";
 
         if ($conn->query($sql) === TRUE) {
