@@ -131,8 +131,8 @@ if ($order_query->execute()) {
                     // Insert payment details into the payment table
                     $payment_date = date('Y-m-d H:i:s');
                     $pay_via = 'Khalti';
-                    $insert_payment_query = $conn->prepare('INSERT INTO payment (order_id, pay_via, transaction_id, amount, payment_date) VALUES (?, ?, ?, ?, ?)');
-                    $insert_payment_query->bind_param('issis', $order_id, $pay_via, $transaction_id, $converted_payment, $payment_date);
+                    $insert_payment_query = $conn->prepare('INSERT INTO payment (order_id, pay_via, transaction_id, amount, payment_date, initrader) VALUES (?, ?, ?, ?, ?, ?)');
+                    $insert_payment_query->bind_param('ississ', $order_id, $pay_via, $transaction_id, $converted_payment, $payment_date, $name);
                     $insert_payment_query->execute();
                     $insert_payment_query->close();
 
@@ -140,6 +140,11 @@ if ($order_query->execute()) {
                     $update_order_query = $conn->prepare("UPDATE orders SET status = 'pending' WHERE order_id = ?");
                     $update_order_query->bind_param("i", $order_id);
                     $update_order_query->execute();
+
+                    // Delete the cart record for the user
+                    $delete_cart_query = $conn->prepare("DELETE FROM add_to_cart WHERE user_id = ?");
+                    $delete_cart_query->bind_param("i", $user_id);
+                    $delete_cart_query->execute();
 
                     // Redirect to the Khalti payment URL
                     header('Location: ' . $payment_url);

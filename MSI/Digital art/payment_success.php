@@ -47,6 +47,13 @@ $product_query->bind_param("i", $order['product_id']);
 $product_query->execute();
 $product_result = $product_query->get_result();
 $product = $product_result->fetch_assoc();
+
+// Fetch user details
+$user_query = $conn->prepare("SELECT user_name, user_email, user_phone FROM user WHERE u_id = ?");
+$user_query->bind_param("i", $order['user_id']);
+$user_query->execute();
+$user_result = $user_query->get_result();
+$user = $user_result->fetch_assoc();
 ?>
 
 <!DOCTYPE html>
@@ -68,6 +75,11 @@ $product = $product_result->fetch_assoc();
                 <p><strong>Payment Method:</strong> <?php echo htmlspecialchars($payment['pay_via']); ?></p>
                 <p><strong>Amount Paid:</strong> ₹<?php echo htmlspecialchars($payment['amount'] / 100); ?></p>
                 <p><strong>Payment Date:</strong> <?php echo htmlspecialchars($payment['payment_date']); ?></p>
+                
+                <h5 class="mt-4">User Details</h5>
+                <p><strong>Name:</strong> <?php echo htmlspecialchars($user['user_name']); ?></p>
+                <p><strong>Email:</strong> <?php echo htmlspecialchars($user['user_email']); ?></p>
+                <p><strong>Phone:</strong> <?php echo htmlspecialchars($user['user_phone']); ?></p>
                 
                 <h5 class="mt-4">Product Details</h5>
                 <p><strong>Product Name:</strong> <?php echo htmlspecialchars($product['product_name']); ?></p>
