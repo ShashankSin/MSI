@@ -29,6 +29,9 @@ if (isset($_POST['add_to_cart'])) {
             exit();
         }
 
+        // Calculate total price for the current product
+        $total_price = $price * $quantity;
+
         // Check if the product is already in the cart
         $cart_query = "SELECT * FROM add_to_cart WHERE product_id = $product_id AND user_id = $user_id";
         $cart_result = $conn->query($cart_query);
@@ -40,9 +43,9 @@ if (isset($_POST['add_to_cart'])) {
             if ($new_quantity > $stock) {
                 echo "Not enough stock available.";
             } else {
-                // Ensure the 'id' exists in the Add_to_cart table
-                $cart_id = $cart_item['cart_id']; // Ensure the 'id' field is present in the Add_to_cart table schema
-                $update_cart_query = "UPDATE add_to_cart SET quantity = $new_quantity WHERE cart_id = $cart_id";
+                // Update cart with new quantity and total price
+                $cart_id = $cart_item['cart_id'];
+                $update_cart_query = "UPDATE add_to_cart SET quantity = $new_quantity, price = $total_price WHERE cart_id = $cart_id";
                 
                 if ($conn->query($update_cart_query) === TRUE) {
                     echo "<script>alert('Product added Successfully'); window.location.href='cart.php';</script>";
@@ -51,8 +54,9 @@ if (isset($_POST['add_to_cart'])) {
                 }
             }
         } else {
+            // Insert new product into cart with total price
             $add_cart_query = "INSERT INTO add_to_cart (product_id, image, quantity, stock, price, user_id) 
-                               VALUES ($product_id, '$image', $quantity, $stock, $price, $user_id)";
+                               VALUES ($product_id, '$image', $quantity, $stock, $total_price, $user_id)";
             if ($conn->query($add_cart_query) === TRUE) {
                 echo "<script>alert('Product added Successfully'); window.location.href='loggedin.php';</script>";
             } else {
