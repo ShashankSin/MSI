@@ -21,150 +21,71 @@ $total_price = 0;
 
 <!DOCTYPE html>
 <html lang="en">
-   <head>
-      <meta charset="utf-8">
-      <meta http-equiv="X-UA-Compatible" content="IE=edge">
-      <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-      <title>Uoni - Cart</title>
-      <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
-      <link rel="stylesheet" type="text/css" href="css/style.css">
-      <link rel="stylesheet" href="css/responsive.css">
-      <link rel="icon" href="images/fevicon.png" type="image/gif" />
-      <link rel="stylesheet" href="css/jquery.mCustomScrollbar.min.css">
-      <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
-      <link href="https://fonts.googleapis.com/css?family=Poppins:400,700&display=swap" rel="stylesheet">
-      <link rel="stylesheet" href="css/owl.carousel.min.css">
-      <link rel="stylesheet" href="css/owl.theme.default.min.css">
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" media="screen">
-      <style>
-         body {
-            position: relative;
-            height: 100vh;
-         }
-         .footer_section {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-         }
-      </style>
-   </head>
-   <body>
-      <!-- Header section start -->
-      <div class="header_section" style="background-image: none;">
-         <div class="header_main">
-            <div class="mobile_menu">
-               <nav class="navbar navbar-expand-lg navbar-light bg-light">
-                  <div class="logo_mobile"><a href="index.php"><img src="images/logo.png"></a></div>
-                  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                     <span class="navbar-toggler-icon"></span>
-                  </button>
-                  <div class="collapse navbar-collapse" id="navbarNav">
-                     <ul class="navbar-nav">
-                        <li class="nav-item active"><a class="nav-link" href="index.php">Home</a></li>
-                        <li class="nav-item"><a class="nav-link" href="about.php">About</a></li>
-                        <li class="nav-item"><a class="nav-link" href="watchs.php">Watchs</a></li>
-                        <li class="nav-item"><a class="nav-link" href="testimonial.php">Testimonial</a></li>
-                        <li class="nav-item"><a class="nav-link" href="contact.php">Contact</a></li>
-                        <li class="nav-item"><a class="nav-link" href="cart.php">Cart</a></li>
-                        <li class="nav-item"><a class="nav-link" href="logout.php">Logout</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#"><img src="images/search-icon.png"></a></li>
-                     </ul>
-                  </div>
-               </nav>
-            </div>
-            <div class="container-fluid">
-               <div class="logo"><a href="index.php"><img src="images/logo.png"></a></div>
-               <div class="menu_main">
-                  <ul>
-                     <li><a href="index.php">Home</a></li>
-                     <li><a href="about.php">About</a></li>
-                     <li><a href="watchs.php">Watchs</a></li>
-                     <li><a href="testimonial.php">Testimonial</a></li>
-                     <li><a href="contact.php">Contact us</a></li>
-                     <li><a href="cart.php" class="active">Cart</a></li>
-                     <li><a href="logout.php">Logout</a></li>
-                     <li><a href="#"><img src="images/search-icon.png"></a></li>
-                  </ul>
-               </div>
-            </div>
-         </div>
-      </div>
-      
-      <!-- Cart section -->
-      <div class="container mt-5">
-         <h2>Your Cart</h2>
-         <?php if ($cart_result->num_rows > 0): ?>
-            <table class="table table-bordered">
-               <thead>
-                  <tr>
-                     <th>Image</th>
-                     <th>Product</th>
-                     <th>Quantity</th>
-                     <th>Price</th>
-                     <th>Total</th>
-                  </tr>
-               </thead>
-               <tbody>
-                  <?php while($cart_item = $cart_result->fetch_assoc()): ?>
-                     <tr>
-                        <td><img src="Admin/productPics/<?php echo htmlspecialchars($cart_item['image']); ?>" alt="Product Image" width="50"></td>
-                        <td><?php echo htmlspecialchars($cart_item['product_id']); ?></td>
-                        <td><?php echo htmlspecialchars($cart_item['quantity']); ?></td>
-                        <td>$<?php echo htmlspecialchars($cart_item['price']); ?></td>
-                        <td>$<?php echo htmlspecialchars($cart_item['price'] * $cart_item['quantity']); ?></td>
-                     </tr>
-                     <?php $total_price += $cart_item['price'] * $cart_item['quantity']; ?>
-                  <?php endwhile; ?>
-               </tbody>
-            </table>
-            <h3>Total: $<?php echo $total_price; ?></h3>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="mb-4">Your Cart</h2>
+        <table class="table table-bordered">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Product ID</th>
+                    <th>Image</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                // Fetch items in cart
+                if ($cart_result->num_rows > 0) {
+                    while ($cart_item = $cart_result->fetch_assoc()) {
+                        $item_total = $cart_item['price'] * $cart_item['quantity'];
+                        $total_price += $item_total; // Calculate total price
+                        echo "<tr>
+                            <td>" . htmlspecialchars($cart_item['product_id']) . "</td>
+                            <td><img src='Admin/productPics/" . htmlspecialchars($cart_item['image']) . "' alt='Product Image' style='width: 100px; height: auto;'></td>
+                            <td>
+                                <form method='POST' action='add_to_cart.php' style='display:inline;'>
+                                    <input type='hidden' name='cart_id' value='" . htmlspecialchars($cart_item['cart_id']) . "'>
+                                    <input type='number' name='quantity' value='" . htmlspecialchars($cart_item['quantity']) . "' min='1' max='" . htmlspecialchars($cart_item['stock']) . "' required>
+                                    <button type='submit' name='update_quantity' class='btn btn-warning'>Update</button>
+                                </form>
+                            </td>
+                            <td>$" . number_format($item_total, 2) . "</td>
+                            <td>
+                                <form method='POST' action='add_to_cart.php' style='display:inline;'>
+                                    <input type='hidden' name='cart_id' value='" . htmlspecialchars($cart_item['cart_id']) . "'>
+                                    <button type='submit' name='delete_from_cart' class='btn btn-danger'>Remove</button>
+                                </form>
+                            </td>
+                        </tr>";
+                    }
+                } else {
+                    echo "<tr><td colspan='5' class='text-center'>No items in the cart.</td></tr>";
+                }
+                ?>
+            </tbody>
+        </table>
+        
+        <!-- Display total amount -->
+        <div class="mb-3">
+            <strong>Total Amount: $<?php echo number_format($total_price, 2); ?></strong>
+        </div>
 
-            <!-- Redirect to payment.php instead of deleting cart items -->
-            <form method="POST" action="payment.php">
-               <button type="submit" class="btn btn-success">Proceed to Payment</button>
-            </form>
+        <form action="payment.php" method="GET">
+            <input type="hidden" name="total_price" value="<?php echo htmlspecialchars($total_price); ?>">
+            <button type="submit" class="btn btn-success">Proceed to Payment</button>
+        </form>
+    </div>
 
-         <?php else: ?>
-            <p>Your cart is empty.</p>
-         <?php endif; ?>
-      </div>
-
-      <!-- Footer section -->
-      <div class="footer_section layout_padding">
-         <div class="container">
-            <h3 class="follow_text">Follow Now</h3>
-            <div class="social_icon">
-               <ul>
-                  <li><a href="#"><img src="images/fb-icon.png"></a></li>
-                  <li><a href="#"><img src="images/twitter-icon.png"></a></li>
-                  <li><a href="#"><img src="images/linkedin-icon.png"></a></li>
-                  <li><a href="#"><img src="images/instagram-icon.png"></a></li>
-                  <li><a href="#"><img src="images/youtub-icon.png"></a></li>
-               </ul>
-            </div>
-            <div class="location_main">
-               <div class="location_left">
-                  <div class="call_text"><a href="#"><img src="images/map-icon.png"><span class="call_padding">Location</span></a></div>
-               </div>
-               <div class="location_middle">
-                  <div class="call_text"><a href="#"><img src="images/mail-icon.png"><span class="call_padding">demo@gmail.com</span></a></div>
-               </div>
-               <div class="location_right">
-                  <div class="call_text"><a href="#"><img src="images/call-icon.png"><span class="call_padding">Call +01 1234567890</span></a></div>
-               </div>
-            </div>
-         </div>
-      </div>
-
-      <!-- Javascript files-->
-      <script src="js/jquery.min.js"></script>
-      <script src="js/popper.min.js"></script>
-      <script src="js/bootstrap.bundle.min.js"></script>
-      <script src="js/jquery-3.0.0.min.js"></script>
-      <script src="js/plugin.js"></script>
-      <script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
-      <script src="js/custom.js"></script>
-      <script src="js/owl.carousel.js"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
-   </body>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
 </html>

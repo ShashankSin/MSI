@@ -2,58 +2,78 @@
 session_start();
 include('db.php');
 
-// Check if the user is logged in
+// Ensure the user is logged in
 if (!isset($_SESSION['user_id'])) {
     echo "You need to log in first.";
     exit();
 }
 
-// Fetch payment details using the order ID from the query parameter
-$order_id = $_GET['order_id'] ?? null; // Retrieve order ID from the query string
+$user_id = $_SESSION['user_id'];
+$order_id = $_GET['order_id'] ?? null;
 
 if (!$order_id) {
-    echo "Order ID is missing.";
+    echo "Invalid order ID.";
     exit();
 }
 
-// Fetch payment details from the database
-$payment_query = $conn->prepare("SELECT * FROM payment WHERE order_id = ?");
-$payment_query->bind_param("i", $order_id);
-$payment_query->execute();
-$payment_result = $payment_query->get_result();
+// Fetch the cart summary and order details
+$receipt_query = $conn->prepare("
+    SELECT 
+        p.product_name, 
+        ci.quantity, 
+        p.product_price, 
+        (ci.quantity * p.product_price) AS total_item_price, 
+        o.total_amount, 
+        o.order_date, 
+        o.status, 
+        pm.pay_via, 
+        pm.transaction_id, 
+        pm.payment_date 
+    FROM 
+        cart_items ci
+    JOIN 
+        product p ON ci.product_id = p.p_id
+    JOIN 
+        cart_summary cs ON ci.cart_id = cs.cart_id
+    JOIN 
+        orders o ON cs.cart_id = o.cart_id
+    JOIN 
+        payment pm ON o.order_id = pm.order_id
+    WHERE 
+        o.order_id = ?
+");
+$receipt_query->bind_param("i", $order_id);
+$receipt_query->execute();
+$receipt_result = $receipt_query->get_result();
 
-if ($payment_result->num_rows === 0) {
-    echo "Payment details not found.";
+if ($receipt_result->num_rows == 0) {
+    echo "No data found for the given order.";
     exit();
 }
 
-$payment = $payment_result->fetch_assoc();
+// Fetch data for the receipt
+$receipt_data = [];
+while ($row = $receipt_result->fetch_assoc()) {
+    $receipt_data[] = $row;
+}
+
+if (empty($receipt_data)) {
+    echo "Error: No receipt data found.";
+    exit();
+}
 
 // Update the order status to 'delivered'
-$update_order_query = $conn->prepare("UPDATE orders SET status = 'delivered' WHERE order_id = ?");
-$update_order_query->bind_param("i", $order_id);
-$update_order_query->execute();
+$update_status_query = $conn->prepare("UPDATE orders SET status = 'delivered' WHERE order_id = ?");
+$update_status_query->bind_param("i", $order_id);
+$update_status_query->execute();
 
-// Fetch order details for more information
-$order_query = $conn->prepare("SELECT * FROM orders WHERE order_id = ?");
-$order_query->bind_param("i", $order_id);
-$order_query->execute();
-$order_result = $order_query->get_result();
-$order = $order_result->fetch_assoc();
-
-// Fetch product details for display
-$product_query = $conn->prepare("SELECT product_name, product_price FROM product WHERE p_id = ?");
-$product_query->bind_param("i", $order['product_id']);
-$product_query->execute();
-$product_result = $product_query->get_result();
-$product = $product_result->fetch_assoc();
-
-// Fetch user details
-$user_query = $conn->prepare("SELECT user_name, user_email, user_phone FROM user WHERE u_id = ?");
-$user_query->bind_param("i", $order['user_id']);
-$user_query->execute();
-$user_result = $user_query->get_result();
-$user = $user_result->fetch_assoc();
+// Get the order information (assuming all rows have the same order info)
+$order_date = $receipt_data[0]['order_date'];
+$total_amount = $receipt_data[0]['total_amount'];
+$order_status = $receipt_data[0]['status'];
+$pay_via = $receipt_data[0]['pay_via'];
+$transaction_id = $receipt_data[0]['transaction_id'];
+$payment_date = $receipt_data[0]['payment_date'];
 ?>
 
 <!DOCTYPE html>
@@ -61,37 +81,70 @@ $user = $user_result->fetch_assoc();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Payment Success</title>
-    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <title>Payment Receipt</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    <div class="container mt-5">
-        <h2 class="text-center">Payment Successful</h2>
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Bill Details</h5>
-                <p><strong>Order ID:</strong> <?php echo htmlspecialchars($payment['order_id']); ?></p>
-                <p><strong>Transaction ID:</strong> <?php echo htmlspecialchars($payment['transaction_id']); ?></p>
-                <p><strong>Payment Method:</strong> <?php echo htmlspecialchars($payment['pay_via']); ?></p>
-                <p><strong>Amount Paid:</strong> ₹<?php echo htmlspecialchars($payment['amount'] / 100); ?></p>
-                <p><strong>Payment Date:</strong> <?php echo htmlspecialchars($payment['payment_date']); ?></p>
-                
-                <h5 class="mt-4">User Details</h5>
-                <p><strong>Name:</strong> <?php echo htmlspecialchars($user['user_name']); ?></p>
-                <p><strong>Email:</strong> <?php echo htmlspecialchars($user['user_email']); ?></p>
-                <p><strong>Phone:</strong> <?php echo htmlspecialchars($user['user_phone']); ?></p>
-                
-                <h5 class="mt-4">Product Details</h5>
-                <p><strong>Product Name:</strong> <?php echo htmlspecialchars($product['product_name']); ?></p>
-                <p><strong>Product Price:</strong> ₹<?php echo htmlspecialchars($product['product_price']); ?></p>
-                <p><strong>Quantity:</strong> <?php echo htmlspecialchars($order['quantity']); ?></p>
-                <p><strong>Total Amount:</strong> ₹<?php echo htmlspecialchars($order['price']); ?></p>
-                
-                <div class="text-center">
-                    <a href="loggedin.php" class="btn btn-primary">Continue Shopping</a>
-                </div>
-            </div>
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Payment Receipt</h2>
+
+    <!-- Order Information -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Order Information</h5>
+            <p><strong>Order ID:</strong> <?php echo htmlspecialchars($order_id); ?></p>
+            <p><strong>Order Date:</strong> <?php echo htmlspecialchars($order_date); ?></p>
+            <p><strong>Status:</strong> <?php echo htmlspecialchars($order_status); ?></p>
+            <p><strong>Total Amount:</strong> Rs. <?php echo number_format($total_amount, 2); ?></p>
         </div>
     </div>
+
+    <!-- Payment Information -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Payment Information</h5>
+            <p><strong>Payment Method:</strong> <?php echo htmlspecialchars($pay_via); ?></p>
+            <p><strong>Transaction ID:</strong> <?php echo htmlspecialchars($transaction_id); ?></p>
+            <p><strong>Payment Date:</strong> <?php echo htmlspecialchars($payment_date); ?></p>
+        </div>
+    </div>
+
+    <!-- Cart Items -->
+    <h5 class="mb-3">Items Purchased:</h5>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Product Name</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Total Price</th>
+            </tr>
+        </thead>
+        <tbody>
+        <?php foreach ($receipt_data as $item): ?>
+            <tr>
+                <td><?php echo htmlspecialchars($item['product_name']); ?></td>
+                <td><?php echo htmlspecialchars($item['quantity']); ?></td>
+                <td>Rs. <?php echo number_format($item['product_price'], 2); ?></td>
+                <td>Rs. <?php echo number_format($item['total_item_price'], 2); ?></td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+
+    <!-- Total Amount -->
+    <div class="text-end mb-4">
+        <h4>Total Amount Paid: Rs. <?php echo number_format($total_amount, 2); ?></h4>
+    </div>
+
+    <!-- Back to Home Button -->
+    <div class="d-flex justify-content-center">
+        <a href="loggedin.php" class="btn btn-primary">Back to Home</a>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

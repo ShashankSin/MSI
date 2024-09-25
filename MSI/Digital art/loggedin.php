@@ -158,7 +158,7 @@ include('db.php');
                              </div>
                              ';
                          }
-                     } else {
+                        } else {
                          echo "<p>No products found.</p>";
                      }
                      ?>

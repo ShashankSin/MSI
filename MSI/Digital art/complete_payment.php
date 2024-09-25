@@ -28,7 +28,7 @@ if ($user_result->num_rows > 0) {
 
 // Join add_to_cart and product tables to fetch the necessary information for placing the order
 $cart_query = $conn->prepare("
-    SELECT a.product_id, a.quantity, p.product_price, (a.quantity * p.product_price) AS price
+    SELECT a.product_id, a.quantity, p.product_price
     FROM add_to_cart a
     JOIN product p ON a.product_id = p.p_id
     WHERE a.user_id = ?
@@ -40,29 +40,33 @@ $cart_result = $cart_query->get_result();
 $total_amount = 0;
 
 if ($cart_result->num_rows > 0) {
+    // Create a single order for the user
+    $order_status = 'pending';
+    $order_date = date('Y-m-d H:i:s');
+
+    // Insert the order into orders table
+    $order_query = $conn->prepare("INSERT INTO orders (user_id, total_amount, order_date, status) VALUES (?, ?, ?, ?)");
+    $order_query->bind_param("idss", $user_id, $total_amount, $order_date, $order_status);
+
+    if (!$order_query->execute()) {
+        echo "Error inserting order: " . $order_query->error;
+        exit();
+    }
+
+    // Get the last inserted order_id
+    $order_id = $conn->insert_id;
+
+    // Process each cart item
     while ($cart_item = $cart_result->fetch_assoc()) {
         $product_id = $cart_item['product_id'];
         $quantity = $cart_item['quantity'];
-        $total_price = $cart_item['price'];
+        $total_price = $cart_item['product_price'] * $quantity;
         $total_amount += $total_price;
 
-        // Insert the order into orders table
-        $order_status = 'pending';
-        $order_date = date('Y-m-d H:i:s');
-
-        $order_query = $conn->prepare("
-            INSERT INTO orders (user_id, product_id, quantity, price, status, order_date)
-            VALUES (?, ?, ?, ?, ?, ?)
-        ");
-        $order_query->bind_param("iiidss", $user_id, $product_id, $quantity, $total_price, $order_status, $order_date);
-        
-        if (!$order_query->execute()) {
-            echo "Error inserting order: " . $order_query->error;
-            exit();
-        }
-
-        // Get the last inserted order_id
-        $order_id = $conn->insert_id;
+        // Insert into orders table
+        $order_item_query = $conn->prepare("INSERT INTO orders (user_id, cart_id, total_amount, order_date, status) VALUES (?, ?, ?, ?, ?)");
+        $order_item_query->bind_param("iidss", $user_id, $order_id, $total_price, $order_date, $order_status);
+        $order_item_query->execute();
 
         // Update product stock
         $product_stock_query = $conn->prepare("SELECT product_stock FROM product WHERE p_id = ?");
@@ -87,7 +91,12 @@ if ($cart_result->num_rows > 0) {
             exit();
         }
     }
-    
+
+    // Update the order's total amount
+    $update_order_amount_query = $conn->prepare("UPDATE orders SET total_amount = ? WHERE order_id = ?");
+    $update_order_amount_query->bind_param("di", $total_amount, $order_id);
+    $update_order_amount_query->execute();
+
     // Proceed with the Khalti payment integration
     $converted_payment = (float)$total_amount * 100; // Convert to paisa for Khalti
     $min_amount = 10 * 100; // Minimum amount in paisa
@@ -121,7 +130,7 @@ if ($cart_result->num_rows > 0) {
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_CUSTOMREQUEST => 'POST',
             CURLOPT_POSTFIELDS => json_encode([
-                "return_url" => "http://localhost/College%20projects/MSI/Digital%20art/payment_success.php?order_id=" . $order_id,
+                "return_url" => "http://localhost/payment_success.php?order_id=" . $order_id,
                 "website_url" => "http://localhost",
                 "amount" => $converted_payment,
                 "purchase_order_id" => $order_id,
@@ -133,7 +142,7 @@ if ($cart_result->num_rows > 0) {
                 ]
             ]),
             CURLOPT_HTTPHEADER => [
-                'Authorization: Key e6acf73475c0480f93d9b6674b489c55',
+                'Authorization: Key e6acf73475c0480f93d9b6674b489c55', // Replace with your actual Khalti secret key
                 'Content-Type: application/json',
             ],
         ]);
@@ -145,7 +154,7 @@ if ($cart_result->num_rows > 0) {
         if ($http_code == 200) {
             $response_data = json_decode($response, true);
             $payment_url = $response_data['payment_url'] ?? null;
-            $transaction_id = $response_data['transaction_id'] ?? '4H7AhoXDJWg5WjrcPT9ixW';
+            $transaction_id = $response_data['transaction_id'] ?? '4H7AhoXDJWg5WjrcPT9ixW'; // Example transaction ID
 
             // Insert payment details into the payment table
             $payment_date = date('Y-m-d H:i:s');
@@ -153,11 +162,6 @@ if ($cart_result->num_rows > 0) {
             $insert_payment_query = $conn->prepare('INSERT INTO payment (order_id, pay_via, transaction_id, amount, payment_date, initrader) VALUES (?, ?, ?, ?, ?, ?)');
             $insert_payment_query->bind_param('ississ', $order_id, $pay_via, $transaction_id, $converted_payment, $payment_date, $name);
             $insert_payment_query->execute();
-
-            // Delete the cart record for the user
-            $delete_cart_query = $conn->prepare("DELETE FROM add_to_cart WHERE user_id = ?");
-            $delete_cart_query->bind_param("i", $user_id);
-            $delete_cart_query->execute();
 
             // Redirect to the Khalti payment URL
             header('Location: ' . $payment_url);

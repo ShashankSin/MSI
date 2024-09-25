@@ -101,7 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 
-    $update_stmt->bind_param("ssssissi", $product_name, $product_price, $product_details, $category_id, $category_name, $product_stock, $product_image, $product_id);
+    $update_stmt->bind_param("sssssssi", $product_name, $product_price, $product_details, $category_id, $category_name, $product_stock, $product_image, $product_id);
 
     if ($update_stmt->execute()) {
         echo "<script>alert('Product updated successfully.'); window.location.href='view_product.php';</script>";
@@ -132,12 +132,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <li><a href="#"><span class="title">Digital Art</span></a></li>
                 <li><a href="index.php"><span class="icon"><ion-icon name="home-outline"></ion-icon></span><span class="title">Dashboard</span></a></li>
                 <li><a href="Category.php"><span class="icon"><ion-icon name="people-outline"></ion-icon></span><span class="title">Category</span></a></li>
-                <li><a href="Product.php"><span class="icon"><ion-icon name="chatbubble-outline"></ion-icon></span><span class="title">Vendor</span></a></li>
-                <li><a href="#"><span class="icon"><ion-icon name="help-outline"></ion-icon></span><span class="title">Product</span></a></li>
-                <li><a href="#"><span class="icon"><ion-icon name="help-outline"></ion-icon></span><span class="title">View Product</span></a></li>
-                <li><a href="#"><span class="icon"><ion-icon name="settings-outline"></ion-icon></span><span class="title">Sales</span></a></li>
-                <li><a href="#"><span class="icon"><ion-icon name="lock-closed-outline"></ion-icon></span><span class="title">Report</span></a></li>
-                <li><a href="#"><span class="icon"><ion-icon name="log-out-outline"></ion-icon></span><span class="title">User</span></a></li>
+                <li><a href="Product.php"><span class="icon"><ion-icon name="help-outline"></ion-icon></span><span class="title">Product</span></a></li>
+                <li><a href="view_product.php"><span class="icon"><ion-icon name="help-outline"></ion-icon></span><span class="title">View Product</span></a></li>
+                <li><a href="Sale.php"><span class="icon"><ion-icon name="settings-outline"></ion-icon></span><span class="title">Sales</span></a></li>
+                <li><a href="Report.php"><span class="icon"><ion-icon name="lock-closed-outline"></ion-icon></span><span class="title">Report</span></a></li>
+                <li><a href="User.php"><span class="icon"><ion-icon name="log-out-outline"></ion-icon></span><span class="title">User</span></a></li>
             </ul>
         </div>
 

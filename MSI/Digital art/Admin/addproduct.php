@@ -2,14 +2,29 @@
 include 'db.php'; // Include your database connection
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Debug form inputs
+    var_dump($_POST);
+    var_dump($_FILES);
+
     // Get the form data
     $product_name = $_POST['product_name'];
     $product_price = $_POST['product_price'];
     $product_details = $_POST['product_details'];
-    $category_id = $_POST['category_id'];  // Using category ID
+    $category_id = isset($_POST['category_id']) ? (int)$_POST['category_id'] : null;  // Using category ID
     $product_stock = (int)$_POST['product_stock']; // Cast to integer if necessary
-    $product_image = $_FILES['product_image']['name'];
-    
+    $product_image = isset($_FILES['product_image']) ? $_FILES['product_image']['name'] : null;
+
+    // Check for errors in form data
+    if (!$category_id) {
+        echo "Error: Category ID is not set.";
+        exit();
+    }
+
+    if (!$product_image) {
+        echo "Error: No image uploaded.";
+        exit();
+    }
+
     // Directory to store the uploaded image
     $target_dir = "productPics/";
     $target_file = $target_dir . basename($product_image);
@@ -21,6 +36,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->execute();
     $category_result = $stmt->get_result();
     $category_row = $category_result->fetch_assoc();
+
+    if (!$category_row) {
+        echo "Error: Category not found for the given category ID.";
+        exit();
+    }
+
     $category_name = $category_row['category_name'];
 
     // Upload the image
@@ -29,10 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $insert_query = "INSERT INTO product (product_name, product_price, product_details, c_id, category_name, product_stock, product_image)
                          VALUES (?, ?, ?, ?, ?, ?, ?)";
         $insert_stmt = $conn->prepare($insert_query);
-        // Ensure the types match the parameters:
-        // product_name (string), product_price (double), product_details (string),
-        // c_id (integer), category_name (string), product_stock (integer), product_image (string)
-        $insert_stmt->bind_param("sdssisi", $product_name, $product_price, $product_details, $category_id, $category_name, $product_stock, $product_image);
+        $insert_stmt->bind_param("sdsssss", $product_name, $product_price, $product_details, $category_id, $category_name, $product_stock, $product_image);
 
         // Execute the insert statement
         if ($insert_stmt->execute()) {

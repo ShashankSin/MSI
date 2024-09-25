@@ -15,17 +15,16 @@
     <!-- =============== Navigation ================ -->
     <div>
       <div class="navigation">
-          <ul>
-              <li><a href="#"><span class="title">Digital Art</span></a></li>
-              <li><a href="index.php"><span class="icon"><ion-icon name="home-outline"></ion-icon></span><span class="title">Dashboard</span></a></li>
-              <li><a href="Category.php"><span class="icon"><ion-icon name="people-outline"></ion-icon></span><span class="title">Category</span></a></li>
-              <li><a href="Vendor.php"><span class="icon"><ion-icon name="chatbubble-outline"></ion-icon></span><span class="title">Vendor</span></a></li>
-              <li><a href="Product.php"><span class="icon"><ion-icon name="help-outline"></ion-icon></span><span class="title">Product</span></a></li>
-              <li><a href="view_product.php"><span class="icon"><ion-icon name="help-outline"></ion-icon></span><span class="title">View Product</span></a></li>
-              <li><a href="#"><span class="icon"><ion-icon name="settings-outline"></ion-icon></span><span class="title">Sales</span></a></li>
-              <li><a href="#"><span class="icon"><ion-icon name="lock-closed-outline"></ion-icon></span><span class="title">Report</span></a></li>
-              <li><a href="#"><span class="icon"><ion-icon name="log-out-outline"></ion-icon></span><span class="title">User</span></a></li>
-          </ul>
+        <ul>
+            <li><a href="#"><span class="title">Digital Art</span></a></li>
+            <li><a href="index.php"><span class="icon"><ion-icon name="home-outline"></ion-icon></span><span class="title">Dashboard</span></a></li>
+            <li><a href="Category.php"><span class="icon"><ion-icon name="people-outline"></ion-icon></span><span class="title">Category</span></a></li>
+            <li><a href="Product.php"><span class="icon"><ion-icon name="help-outline"></ion-icon></span><span class="title">Product</span></a></li>
+            <li><a href="view_product.php"><span class="icon"><ion-icon name="help-outline"></ion-icon></span><span class="title">View Product</span></a></li>
+            <li><a href="Sale.php"><span class="icon"><ion-icon name="settings-outline"></ion-icon></span><span class="title">Sales</span></a></li>
+            <li><a href="Report.php"><span class="icon"><ion-icon name="lock-closed-outline"></ion-icon></span><span class="title">Report</span></a></li>
+            <li><a href="User.php"><span class="icon"><ion-icon name="log-out-outline"></ion-icon></span><span class="title">User</span></a></li>
+        </ul>
       </div>
 
       <!-- ========================= Main ==================== -->
@@ -71,12 +70,32 @@
               <div class="numbers"><?php echo number_format($total_products); ?></div>
               <div class="cardName">Total Products</div>
             </div>
+            <div class="iconBx">
+              <ion-icon name="bag-remove-outline"></ion-icon>
+            </div>
           </div>
 
-          <!-- <div class="card">
+          <div class="card">
             <div>
-              <div class="numbers">80</div>
-              <div class="cardName">Sales</div>
+                <?php
+                // Database connection
+                include 'db.php';
+
+                // Query to get the total number of sales where status is 'delivered'
+                $query_sales = "SELECT COUNT(*) AS total_sales FROM orders WHERE status = 'delivered'";
+                $result_sales = $conn->query($query_sales);
+
+                if ($result_sales) {
+                    $row_sales = $result_sales->fetch_assoc();
+                    $total_sales = $row_sales['total_sales'];
+                } else {
+                    $total_sales = 'N/A'; // Handle error
+                }
+
+                $conn->close();
+                ?>
+                <div class="numbers"><?php echo number_format($total_sales); ?></div>
+                <div class="cardName">Total Sales</div>
             </div>
 
             <div class="iconBx">
@@ -85,26 +104,32 @@
           </div>
 
           <div class="card">
-            <div>
-              <div class="numbers">284</div>
-              <div class="cardName">Comments</div>
-            </div>
+              <div>
+                <?php
+                // Database connection
+                include 'db.php';
 
-            <div class="iconBx">
-              <ion-icon name="chatbubbles-outline"></ion-icon>
-            </div>
-          </div>
+                // Query to get the total amount from the payment table
+                $query_amount = "SELECT SUM(amount) AS total_amount FROM payment";
+                $result_amount = $conn->query($query_amount);
 
-          <div class="card">
-            <div>
-              <div class="numbers">$7,842</div>
-              <div class="cardName">Earning</div>
+                if ($result_amount) {
+                    $row_amount = $result_amount->fetch_assoc();
+                    $total_amount = $row_amount['total_amount'];
+                } else {
+                    $total_amount = 0; // Handle error or set to 0 if there are no payments
+                }
+
+                $conn->close();
+                ?>
+                <div class="numbers">Rs. <?php echo number_format($total_amount, 2); ?></div>
+                <div class="cardName">Total Amount Received</div>
             </div>
 
             <div class="iconBx">
               <ion-icon name="cash-outline"></ion-icon>
             </div>
-          </div> -->
+          </div>
         </div>
 
         <!-- ================ Order Details List ================= -->
