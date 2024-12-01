@@ -21,12 +21,14 @@ $total_price = 0;
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your Cart</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
+
 <body>
     <div class="container mt-5">
         <h2 class="mb-4">Your Cart</h2>
@@ -72,7 +74,7 @@ $total_price = 0;
                 ?>
             </tbody>
         </table>
-        
+
         <!-- Display total amount -->
         <div class="mb-3">
             <strong>Total Amount: $<?php echo number_format($total_price, 2); ?></strong>
@@ -88,4 +90,5 @@ $total_price = 0;
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
+
 </html>
