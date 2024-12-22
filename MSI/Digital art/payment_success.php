@@ -83,12 +83,128 @@ $payment_date = $receipt_data[0]['payment_date'];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Payment Receipt</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- bootstrap css -->
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+    <!-- style css -->
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <!-- Responsive-->
+    <link rel="stylesheet" href="css/responsive.css">
+    <!-- fevicon -->
+    <link rel="icon" href="images/fevicon.png" type="image/gif" />
+    <!-- Scrollbar Custom CSS -->
+    <link rel="stylesheet" href="css/jquery.mCustomScrollbar.min.css">
+    <!-- Tweaks for older IEs-->
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+    <!-- fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Poppins:400,700&display=swap" rel="stylesheet">
+    <!-- owl stylesheets -->
+    <link rel="stylesheet" href="css/owl.carousel.min.css">
+    <link rel="stylesheet" href="css/owl.theme.default.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css"
+        media="screen">
+    <style>
+    body {
+        background-color: #f5f5f5;
+    }
+    </style>
 </head>
 
 <body>
-    <div class="container mt-5">
+    <div class="header_section">
+        <div class="header_main">
+            <div class="mobile_menu">
+                <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                    <div class="logo_mobile"><a href="index.php"><img src="images/logo.png"></a></div>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav">
+                            <li class="nav-item active">
+                                <a class="nav-link" href="index.php">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="about.php">About</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="watchs.php">Watchs</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link " href="testimonial.php">Testimonial</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link " href="contact.php">Contact</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link " href="#"><img src="images/search-icon.png"></a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+            <div class="container-fluid">
+                <div class="logo"><a href="index.php"><img src="images/logo.png"></a></div>
+                <div class="menu_main">
+                    <ul>
+                        <li class="active"><a href="index.php">Home</a></li>
+                        <li><a href="about.php">About</a></li>
+                        <li><a href="watchs.php">Watchs</a></li>
+                        <li><a href="testimonial.php">Testimonial</a></li>
+                        <li><a href="contact.php">Contact us</a></li>
+                        <li><a href="cart.php">Cart</a></li>
+                        <li><a href="logout.php">Logout</a></li>
+                        <li><a href="#"><img src="images/search-icon.png"></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- banner section start -->
+        <div class="banner_section layout_padding">
+            <div id="main_slider" class="carousel slide" data-ride="carousel">
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <div class="container">
+                            <h1 class="banner_taital">Digital Art</h1>
+                            <p class="banner_text">There are many variations of passages of Lorem Ipsum available,
+                                but
+                                the majority have suffered</p>
+                            <div class="read_bt"><a href="#">Buy Now</a></div>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="container">
+                            <h1 class="banner_taital">Digital Art</h1>
+                            <p class="banner_text">There are many variations of passages of Lorem Ipsum available,
+                                but
+                                the majority have suffered</p>
+                            <div class="read_bt"><a href="#">Buy Now</a></div>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="container">
+                            <h1 class="banner_taital">Digital Art</h1>
+                            <p class="banner_text">There are many variations of passages of Lorem Ipsum available,
+                                but
+                                the majority have suffered</p>
+                            <div class="read_bt"><a href="#">Buy Now</a></div>
+                        </div>
+                    </div>
+                </div>
+                <a class="carousel-control-prev" href="#main_slider" role="button" data-slide="prev">
+                    <i class="fa fa-plus" style="font-size:24px; color: #fff;"></i>
+                </a>
+                <a class="carousel-control-next" href="#main_slider" role="button" data-slide="next">
+                    <i class="fa fa-minus" style="font-size:24px;  color: #fff;"></i>
+                </a>
+            </div>
+        </div>
+        <!-- banner section end -->
+    </div>
+    <div class="container">
         <h2 class="text-center mb-4">Payment Receipt</h2>
 
         <!-- Order Information -->

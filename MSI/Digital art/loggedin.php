@@ -98,7 +98,7 @@ include('db.php');
                 <div class="carousel-inner">
                     <div class="carousel-item active">
                         <div class="container">
-                            <h1 class="banner_taital">Watchs</h1>
+                            <h1 class="banner_taital">Digital Art</h1>
                             <p class="banner_text">There are many variations of passages of Lorem Ipsum available, but
                                 the majority have suffered</p>
                             <div class="read_bt"><a href="#">Buy Now</a></div>
@@ -106,7 +106,7 @@ include('db.php');
                     </div>
                     <div class="carousel-item">
                         <div class="container">
-                            <h1 class="banner_taital">Watchs</h1>
+                            <h1 class="banner_taital">Digital Art</h1>
                             <p class="banner_text">There are many variations of passages of Lorem Ipsum available, but
                                 the majority have suffered</p>
                             <div class="read_bt"><a href="#">Buy Now</a></div>
@@ -114,7 +114,7 @@ include('db.php');
                     </div>
                     <div class="carousel-item">
                         <div class="container">
-                            <h1 class="banner_taital">Watchs</h1>
+                            <h1 class="banner_taital">Digital Art</h1>
                             <p class="banner_text">There are many variations of passages of Lorem Ipsum available, but
                                 the majority have suffered</p>
                             <div class="read_bt"><a href="#">Buy Now</a></div>
